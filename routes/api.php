@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Http\Request;
+use App\GraphQL\RouterGraphQL;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,6 +18,6 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/ql', function () {
-	return "[]";
+Route::get('/query', function (Request $request) {
+    return (new RouterGraphQL($request))->result();
 });
