@@ -21,3 +21,23 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::get('/query', function (Request $request) {
     return (new RouterGraphQL($request))->result();
 });
+
+Route::post('/query', function (Request $request) {
+
+    if (isset($_SERVER['CONTENT_TYPE']) && strpos($_SERVER['CONTENT_TYPE'], 'application/json') !== false) {
+        $raw = file_get_contents('php://input') ?: '';
+        $data = json_decode($raw, true);
+    } else if (isset($_SERVER['CONTENT_TYPE']) && strpos($_SERVER['CONTENT_TYPE'], 'application/graphql') !== false) {
+		$raw = file_get_contents('php://input') ?: '';
+		$data = [
+			'query' => $raw
+		];
+    } else {
+        $data = $_REQUEST;
+    }
+    $data += ['query' => null, 'variables' => null];
+    if (null === $data['query']) {
+        $data['query'] = '{hello}';
+    }
+    return (new RouterGraphQL($data))->result();
+});

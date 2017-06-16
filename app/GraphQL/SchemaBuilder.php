@@ -27,6 +27,7 @@ class SchemaBuilder
             $name = $query->name();
             $config['fields'][$name] = $query->attributes();
         }
+        //print_r($config); die();
 
         return new ObjectType($config);
     }

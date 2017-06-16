@@ -2,25 +2,26 @@
 namespace App\GraphQL;
 
 use Illuminate\Http\Request;
-use \GraphQL\Schema;
+use GraphQL\Schema;
+use GraphQL\GraphQL;
 
 class RouterGraphQL
 {
-    /**
-     * The request received
-     * @var Illuminate\Http\Request
-     */
-    private $request;
-    
     /**
      * The GraphQL schema
      * @var \GraphQL\Schema
      */
     private $schema;
 
-    public function __contructor(Request $request)
+    /**
+     * Query string
+     * @var [type]
+     */
+    private $query;
+
+    public function __construct(array $data)
     {
-        $this->request = $request;
+        $this->query = $data['query'];
     }
 
     /**
@@ -30,9 +31,10 @@ class RouterGraphQL
     public function result()
     {
         $this->createSchema();
-        return json_encode([
-            'status' => 'ok'
-        ]);
+        return GraphQL::execute(
+            $this->schema,
+            $this->query
+        );
     }
 
     protected function createSchema()
